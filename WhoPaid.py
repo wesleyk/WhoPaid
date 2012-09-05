@@ -18,10 +18,10 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 def hello():
 	connection = Connection(MONGO_URL)
 	db = connection.app7324197
-	return "Hello, world!"
 	
-	#users = db.users
-	#payments = db.payments
+	users = db.users
+	payments = db.payments
+	return "Hello, world!"
 	
 	#output = ""
 	#for user in users.find():
