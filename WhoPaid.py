@@ -12,14 +12,15 @@ client = TwilioRestClient(account, token)
 
 # Connect to MongoDB, and retrieve collections
 MONGO_URL = os.environ.get('MONGOHQ_URL')
-connection = Connection(MONGO_URL)
-db = connection.app7324197
-users = db.users
-payments = db.payments
 
 
 @app.route('/')
 def hello():
+	connection = Connection(MONGO_URL)
+	db = connection.app7324197
+	users = db.users
+	payments = db.payments
+	
 	output = ""
 	for user in users.find():
 		output += user + " "
