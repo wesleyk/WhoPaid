@@ -18,12 +18,14 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 def hello():
 	connection = Connection(MONGO_URL)
 	db = connection.app7324197
-	users = db.users
-	payments = db.payments
+	return "Hello, world!"
 	
-	output = ""
-	for user in users.find():
-		output += user + " "
+	#users = db.users
+	#payments = db.payments
+	
+	#output = ""
+	#for user in users.find():
+	#	output += user + " "
 
 	#for message in client.sms.messages.list():
 	#    print message.body
@@ -31,7 +33,7 @@ def hello():
 	#message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
 	#                                     body="Hello there!")
 	
-	return output
+	#return output
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
