@@ -11,7 +11,8 @@ token = "da09cf1ce50760e7ef4405d9c8334239"
 client = TwilioRestClient(account, token)
 
 # Connect to MongoDB, and retrieve collections
-connection = Connection()
+MONGO_URL = os.environ.get('MONGOHQ_URL')
+connection = Connection(MONGO_URL)
 db = connection.app7324197
 users = db.users
 payments = db.payments
