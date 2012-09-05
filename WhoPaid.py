@@ -21,6 +21,9 @@ def hello():
 	
 	users = db.users
 	payments = db.payments
+	
+	payments.insert({'name': "Test"})
+	
 	return "Hello, world!"
 	
 	#output = ""
