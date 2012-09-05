@@ -22,19 +22,14 @@ def hello():
 	users = db.users
 	payments = db.payments
 	
-	payments.insert({'name': "Test"})
-	
 	return "Hello, world!"
 	
-	#output = ""
-	#for user in users.find():
-	#	output += user + " "
+	
+	for message in client.sms.messages.list():
+	    print message.body
 
-	#for message in client.sms.messages.list():
-	#    print message.body
-
-	#message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
-	#                                     body="Hello there!")
+	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
+	                                     body="Hello there!")
 	
 	#return output
 
