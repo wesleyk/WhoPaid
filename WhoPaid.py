@@ -11,9 +11,6 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 
 @app.route('/', methods=['GET', 'POST'])
 def parseSMS():
-	# Two day buffer so not all texts from Twilio are received
-	d=date.today()-timedelta(days=2)
-	
 	# Twilio details
 	account = "AC74068c46306d722c23fc68291b67071a"
 	token = "da09cf1ce50760e7ef4405d9c8334239"
@@ -25,7 +22,7 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 	
-	messages = client.sms.messages.list(after=d)
+	messages = client.sms.messages.list()
 	
 	body = ""
 	# first message is the most recent
