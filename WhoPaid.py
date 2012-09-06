@@ -7,6 +7,11 @@ app = Flask(__name__)
 
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
+# Our phone numbers
+wesley_number = "+14254436511"
+brandon_number = "+19256837230"
+eddie_number = "+15615426296"
+
 @app.route('/', methods=['GET', 'POST'])
 def parseSMS():
 	# Twilio details
@@ -23,26 +28,29 @@ def parseSMS():
 	
 	from_number = request.values.get('From', None)
 	body = request.values.get('Body', None)
-	
+
+	# Parse body for amount and target
+
+	response = ""
 	# Wesley sent in message
-	if (from_number == "+14254436511"):
-		body += "Wesley"
+	if (from_number == wesley_number):
+		response += "Wesley"
 	
 	# Brandon sent in message
-	elif (from_number == "+19256837230"):
-		body += "Brandon"
+	elif (from_number == brandon_number):
+		response += "Brandon"
 	
 	# Eddie sent in message
-	elif (from_number == "+15615426296"):
-		body += "Eddie"
+	elif (from_number == eddie_number):
+		response += "Eddie"
 	
 	# ignore message because it wasn't from one of us
 	else:
-		body += "Not part of the land down Unger"
+		response += "Not part of the land down Unger"
 	
-	body += from_number
+	response += from_number
 	
-	message = client.sms.messages.create(to=from_number, from_="+14259678372", body=body)
+	message = client.sms.messages.create(to=from_number, from_="+14259678372", body=response)
 
 	return ""
 	
