@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from twilio.rest import TwilioRestClient
 from pymongo import Connection
-from datetime import date, timedelta
 
 app = Flask(__name__)
 
