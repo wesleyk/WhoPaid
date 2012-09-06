@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Connect to MongoDB, and retrieve collections
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
-@app.route('/')
+@app.route('/login', methods=['GET', 'POST'])
 def parseSMS():
 	# Twilio details
 	account = "AC74068c46306d722c23fc68291b67071a"
@@ -27,7 +27,7 @@ def parseSMS():
 	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
 		                                     body="Hi!")
 		
-	return
+	return "Done"
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
