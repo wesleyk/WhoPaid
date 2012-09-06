@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from twilio.rest import TwilioRestClient
 from pymongo import Connection
+from datetime import date, timedelta
 
 app = Flask(__name__)
 
@@ -10,6 +11,9 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 
 @app.route('/', methods=['GET', 'POST'])
 def parseSMS():
+	# Two day buffer so not all texts from Twilio are received
+	d=date.today()-timedelta(days=2)
+	
 	# Twilio details
 	account = "AC74068c46306d722c23fc68291b67071a"
 	token = "da09cf1ce50760e7ef4405d9c8334239"
@@ -21,11 +25,12 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 	
-	messages = client.sms.messages.list()
+	messages = client.sms.messages.list(after=d)
 	
+	body = ""
 	# first message is the most recent
 	for message in messages:
-	    body = message.body
+	    body += message.body
 	
 	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=body)
 
