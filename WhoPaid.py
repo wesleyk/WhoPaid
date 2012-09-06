@@ -15,23 +15,20 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 
 
 @app.route('/')
-def hello():
+def parseSMS():
 	connection = Connection(MONGO_URL)
 	db = connection.app7324197
 	
 	users = db.users
 	payments = db.payments
 	
-	return "Hello, world!"
-	
-	
 	for message in client.sms.messages.list():
-	    print message.body
-
-	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
-	                                     body="Hello there!")
+	    return message.body
 	
-	#return output
+	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
+		                                     body="Hello there!")
+		
+	return "Hello, world!"
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
