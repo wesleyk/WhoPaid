@@ -25,24 +25,24 @@ def parseSMS():
 	body = request.values.get('Body', None)
 	
 	# Wesley sent in message
-	if (from_number == "14254436511"):
+	if (from_number == "+14254436511"):
 		body += "Wesley"
 	
 	# Brandon sent in message
-	elif (from_number == "19256837230"):
+	elif (from_number == "+19256837230"):
 		body += "Brandon"
 	
 	# Eddie sent in message
-	elif (from_number == "15615426296"):
+	elif (from_number == "+15615426296"):
 		body += "Eddie"
 	
 	# ignore message because it wasn't from one of us
 	else:
-		body += "didn't work"
+		body += "Not part of the land down Unger"
 	
 	body += from_number
 	
-	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=body)
+	message = client.sms.messages.create(to=from_number, from_="+14259678372", body=body)
 
 	return ""
 	
