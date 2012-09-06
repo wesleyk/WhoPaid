@@ -21,11 +21,11 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 	
-	for message in client.sms.messages.list():
-	    body = message.body
+	#for message in client.sms.messages.list():
+	#    body = message.body
 	
 	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
-		                                     body=body)
+		                                     body="Hi!")
 		
 	return
 
