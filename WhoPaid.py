@@ -24,8 +24,7 @@ def parseSMS():
 	for message in client.sms.messages.list():
 	    body = message.body
 	
-	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
-		                                     body=body)
+	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body="Hello!")
 		
 	return "Complete"
 
