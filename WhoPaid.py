@@ -1,11 +1,10 @@
 import os
-from flask import Flask
+from flask import Flask, request, redirect
 from twilio.rest import TwilioRestClient
 from pymongo import Connection
 
 app = Flask(__name__)
 
-# Connect to MongoDB, and retrieve collections
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
 @app.route('/', methods=['GET', 'POST'])
@@ -15,38 +14,35 @@ def parseSMS():
 	token = "da09cf1ce50760e7ef4405d9c8334239"
 	client = TwilioRestClient(account, token)
 	
+	# Connect to MongoDB, and retrieve collections
 	connection = Connection(MONGO_URL)
 	db = connection.app7324197
 	
 	users = db.users
 	payments = db.payments
 	
-	body = ""
+	from_number = request.values.get('From', None)
+	body = request.values.get('Body', None)
 	
-	# first message is the most recent
-	for message in client.sms.messages.list():
-		body = message.body
-		from_number = message.from
-		
-		#Wesley sent in message
-		if (from_number == "14254436511"):
-			body = "Wesley"
-		
-		#Brandon sent in message
-		elif (from_number == "19256837230"):
-			body = "Brandon"
-		
-		#Eddie sent in message
-		elif (from_number == "15615426296"):
-			body = "Eddie"
-		
-		#ignore message because it wasn't from one of us
-		else 
-			return ""
-			
-		break
+	# Wesley sent in message
+	if (from_number == "14254436511"):
+		body += "Wesley"
 	
-	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=from_number)
+	# Brandon sent in message
+	elif (from_number == "19256837230"):
+		body += "Brandon"
+	
+	# Eddie sent in message
+	elif (from_number == "15615426296"):
+		body += "Eddie"
+	
+	# ignore message because it wasn't from one of us
+	else 
+		body += "didn't work"
+	
+	body += from_number
+	
+	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=body)
 
 	return ""
 	
