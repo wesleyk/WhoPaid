@@ -37,7 +37,7 @@ def parseSMS():
 		body += "Eddie"
 	
 	# ignore message because it wasn't from one of us
-	else 
+	else:
 		body += "didn't work"
 	
 	body += from_number
