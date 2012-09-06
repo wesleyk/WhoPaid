@@ -22,12 +22,31 @@ def parseSMS():
 	payments = db.payments
 	
 	body = ""
+	
 	# first message is the most recent
 	for message in client.sms.messages.list():
 		body = message.body
+		from_number = message.from
+		
+		#Wesley sent in message
+		if (from_number == "14254436511"):
+			body = "Wesley"
+		
+		#Brandon sent in message
+		elif (from_number == "19256837230"):
+			body = "Brandon"
+		
+		#Eddie sent in message
+		elif (from_number == "15615426296"):
+			body = "Eddie"
+		
+		#ignore message because it wasn't from one of us
+		else 
+			return ""
+			
 		break
 	
-	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=body)
+	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body=from_number)
 
 	return ""
 	
