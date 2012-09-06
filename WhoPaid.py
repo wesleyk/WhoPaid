@@ -21,13 +21,13 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 	
-	#for message in client.sms.messages.list():
-	#    body = message.body
+	for message in client.sms.messages.list():
+	    body = message.body
 	
 	message = client.sms.messages.create(to="+14254436511", from_="+14259678372",
-		                                     body="Hi!")
+		                                     body=body)
 		
-	return "Done"
+	return "Complete"
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
