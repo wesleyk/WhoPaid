@@ -26,6 +26,8 @@ def parseSMS():
 	
 	message = client.sms.messages.create(to="+14254436511", from_="+14259678372", body="Hello!")
 
+	return ""
+	
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
     port = int(os.environ.get('PORT', 5000))
