@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Connect to MongoDB, and retrieve collections
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def parseSMS():
 	# Twilio details
 	account = "AC74068c46306d722c23fc68291b67071a"
