@@ -76,7 +76,7 @@ def parseSMS():
 	
 	# respond to RETRIEVE BALANCE TEXT
 	
-	if (body_array[0].lower() == "balance"):
+	if (body_array[0].lower()[:3] == "bal"):
 		response = generateBalance(w_owes,b_owes,e_owes)
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
@@ -218,7 +218,8 @@ def parseSMS():
 		return ""
 	
 	# reduce any circular debts
-	# eg: E owes W x, W owes B y, so E should owe B x and W should owe B y - x
+	# eg: E owes W x, W owes B y, so E should owe B x and W should owe B y - x,
+	# although cased on whether x >= y
 	if (w_owes[b] > 0 and b_owes[e] > 0):
 		if(w_owes[b] >= b_owes[e]):
 			w_owes[e] += b_owes[e]
@@ -295,8 +296,11 @@ def parseSMS():
 	users.save(b_doc)
 	users.save(e_doc)
 	
+	# send new balance to all members of Unger
 	response = generateBalance(w_owes,b_owes,e_owes)
-	client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+	client.sms.messages.create(to=w_number, from_=twilio_number, body=response)
+	client.sms.messages.create(to=b_number, from_=twilio_number, body=response)
+	client.sms.messages.create(to=e_number, from_=twilio_number, body=response)
 	
 	return ""
 	
