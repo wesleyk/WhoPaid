@@ -5,18 +5,37 @@ from pymongo import Connection
 
 app = Flask(__name__)
 
+# MongoDB url
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
-# Our phone numbers
-wesley_number = "+14254436511"
-brandon_number = "+19256837230"
-eddie_number = "+15615426296"
+# Twilio details
+account = "AC74068c46306d722c23fc68291b67071a"
+token = "da09cf1ce50760e7ef4405d9c8334239"
+twilio_number = "+14259678372"
 
-@app.route('/', methods=['GET', 'POST'])
+# Name constants
+w = "Wesley"
+b = "Brandon"
+e = "Eddie"
+
+# Our phone numbers
+w_number = "+14254436511"
+b_number = "+19256837230"
+e_number = "+15615426296"
+
+def generateBalance(w_owes,b_owes,e_owes):
+	response =  "w owes b: " + str(w_owes[b]) + "\n"
+	response += "w owes e: " + str(w_owes[e]) + "\n"
+	response += "b owes w: " + str(b_owes[w]) + "\n"
+	response += "b owes e: " + str(b_owes[e]) + "\n"
+	response += "e owes w: " + str(e_owes[w]) + "\n"
+	response += "e owes b: " + str(e_owes[b])
+	return response
+	
+
+@app.route('/', methods=['POST'])
 def parseSMS():
-	# Twilio details
-	account = "AC74068c46306d722c23fc68291b67071a"
-	token = "da09cf1ce50760e7ef4405d9c8334239"
+	# Establish connection with Twilio
 	client = TwilioRestClient(account, token)
 	
 	# Connect to MongoDB, and retrieve collections
@@ -25,33 +44,179 @@ def parseSMS():
 	
 	users = db.users
 	payments = db.payments
+
+	# Determine current debts
+	w_doc = users.find_one({"username":w})
+	w_owes = w_doc["owes"]
+	b_doc = users.find_one({"username":b})
+	b_owes = b_doc["owes"]
+ 	e_doc = users.find_one({"username":e})
+	e_owes = e_doc["owes"]
 	
+	# Parse message for sender, amount, and target
 	from_number = request.values.get('From', None)
 	body = request.values.get('Body', None)
+	
+	body_array = body.split(" ")
+	
+	# empty text case
+	if (len(body_array) == 0):
+		return ""
+	
+	# respond to RETRIEVE BALANCE TEXT
+	
+	if (body_array[0] == "balance"):
+		response = generateBalance(w_owes,b_owes,e_owes)
+		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+		return ""
+	
+	# respond to SUBMIT PAYMENT TEXT
+	
+	# determine amount paid, rounded to two decimal points
+	amount = round(float(body_array[0]), 2)
 
-	# Parse body for amount and target
+	# determine how much each person should contribute
+	# it's either 1/3 amount if it's a payment for everyone,
+	# or just amount if it's a payment from one person to another
+	amount_charged = amount
+	
+	# determine if the payment is for all members
+	pay_all = len(body_array) == 1
+	if(pay_all):
+		amount_charged = amount / 3
 
-	response = ""
 	# Wesley sent in message
-	if (from_number == wesley_number):
-		response += "Wesley"
-	
+	if (from_number == w_number):
+		# Register payment
+		if(pay_all):
+			payments.insert({"Amount":amount,"From":w,"To":"All"})
+		else:
+			payments.insert({"Amount":amount,"From":w,"To":body_array[1]})
+		
+		# pay Brandon case
+		if (pay_all or body_array[1] == "b"):
+			# Wesley owes Brandon case
+			if (w_owes[b] > 0):
+				# Wesley owes Brandon more than he just paid, so deduct the amount paid from the total
+				if (w_owes[b] >= amount_charged):
+					w_owes[b] -= amount_charged
+				# Wesley owes Brandon less than he just paid, so now Brandon owes Wesley some money
+				else:
+					b_owes[w] = amount_charged - w_owes[b] 
+					w_owes[b] = 0
+			# Brandon owes Wesley case
+			elif (b_owes[w] >= 0):
+				b_owes[w] += amount_charged
+
+		# pay Eddie case
+		if (pay_all or body_array[1] == "e"):
+			# Wesley owes Eddie case
+			if (w_owes[e] > 0):
+				# Wesley owes Eddie more than he just paid, so deduct the amount paid from the total
+				if (w_owes[e] >= amount_charged):
+					w_owes[e] -= amount_charged
+				# Wesley owes Eddie less than he just paid, so now Eddie owes Wesley some money
+				else:
+					e_owes[w] = amount_charged - w_owes[e] 
+					w_owes[e] = 0
+			# Eddie owes Wesley case
+			elif (e_owes[w] >= 0):
+				e_owes[w] += amount_charged
+				
 	# Brandon sent in message
-	elif (from_number == brandon_number):
-		response += "Brandon"
-	
+	elif (from_number == b_number):
+		# Register payment
+		if(pay_all):
+			payments.insert({"Amount":amount,"From":b,"To":"All"})
+		else:
+			payments.insert({"Amount":amount,"From":b,"To":body_array[1]})
+			
+		# pay Wesley case
+		if (pay_all or body_array[1] == "w"):
+			# Brandon owes Wesley case
+			if (b_owes[w] > 0):
+				# Brandon owes Wesley more than he just paid, so deduct the amount paid from the total
+				if (b_owes[w] >= amount_charged):
+					b_owes[w] -= amount_charged
+				# Brandon owes Wesley less than he just paid, so now Wesley owes Brandon some money
+				else:
+					w_owes[b] = amount_charged - b_owes[w] 
+					b_owes[w] = 0
+			# Wesley owes Brandon case
+			elif (w_owes[b] >= 0):
+				w_owes[b] += amount_charged
+
+		# pay Eddie case
+		if (pay_all or body_array[1] == "e"):
+			# Brandon owes Eddie case
+			if (b_owes[e] > 0):
+				# Brandon owes Eddie more than he just paid, so deduct the amount paid from the total
+				if (b_owes[e] >= amount_charged):
+					b_owes[e] -= amount_charged
+				# Brandon owes Eddie less than he just paid, so now Eddie owes Brandon some money
+				else:
+					e_owes[b] = amount_charged - b_owes[e] 
+					b_owes[e] = 0
+			# Eddie owes Brandon case
+			elif (e_owes[b] >= 0):
+				e_owes[b] += amount_charged
+
+
 	# Eddie sent in message
-	elif (from_number == eddie_number):
-		response += "Eddie"
-	
+	elif (from_number == e_number):
+		# Register payment
+		if(pay_all):
+			payments.insert({"Amount":amount,"From":e,"To":"All"})
+		else:
+			payments.insert({"Amount":amount,"From":e,"To":body_array[1]})
+			
+		# pay Wesley case
+		if (pay_all or body_array[1] == "w"):
+			# Eddie owes Wesley case
+			if (e_owes[w] > 0):
+				# Eddie owes Wesley more than he just paid, so deduct the amount paid from the total
+				if (e_owes[w] >= amount_charged):
+					e_owes[w] -= amount_charged
+				# Eddie owes Wesley less than he just paid, so now Wesley owes Eddie some money
+				else:
+					w_owes[e] = amount_charged - e_owes[w] 
+					e_owes[w] = 0
+			# Wesley owes Eddie case
+			elif (w_owes[e] >= 0):
+				w_owes[e] += amount_charged
+				
+		# pay Brandon case
+		if (pay_all or body_array[1] == "b"):
+			# Eddie owes Brandon case
+			if (e_owes[b] > 0):
+				# Eddie owes Brandon more than he just paid, so deduct the amount paid from the total
+				if (e_owes[b] >= amount_charged):
+					e_owes[b] -= amount_charged
+				# Eddie owes Brandon less than he just paid, so now Brandon owes Eddie some money
+				else:
+					b_owes[e] = amount_charged - e_owes[b] 
+					e_owes[b] = 0
+			# Brandon owes Eddie case
+			elif (b_owes[e] >= 0):
+				b_owes[e] += amount_charged
+				
 	# ignore message because it wasn't from one of us
 	else:
-		response += "Not part of the land down Unger"
+		response = "Not part of the land down Unger"
+		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+		return ""
 	
-	response += from_number
+	# update users table of DB with updated debts
+	w_doc["owes"] = w_owes
+	b_doc["owes"] = b_owes
+	e_doc["owes"] = e_owes
+	users.save(w_doc)
+	users.save(b_doc)
+	users.save(e_doc)
 	
-	message = client.sms.messages.create(to=from_number, from_="+14259678372", body=response)
-
+	response = generateBalance(w_owes,b_owes,e_owes)
+	client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+	
 	return ""
 	
 if __name__ == '__main__':
