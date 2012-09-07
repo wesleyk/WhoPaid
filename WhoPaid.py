@@ -206,6 +206,15 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 	
+	# round all values to two decimal places
+	w_owes[b] = round(w_owes[b], 2)
+	w_owes[e] = round(w_owes[e], 2)
+	b_owes[w] = round(b_owes[w], 2)
+	b_owes[e] = round(b_owes[e], 2)
+	e_owes[w] = round(e_owes[w], 2)
+	e_owes[b] = round(e_owes[b], 2)
+	
+	
 	# update users table of DB with updated debts
 	w_doc["owes"] = w_owes
 	b_doc["owes"] = b_owes
