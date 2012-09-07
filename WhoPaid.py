@@ -76,7 +76,7 @@ def parseSMS():
 	
 	# respond to RETRIEVE BALANCE TEXT
 	
-	if (body_array[0] == "balance"):
+	if (body_array[0].lower() == "balance"):
 		response = generateBalance(w_owes,b_owes,e_owes)
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
@@ -217,6 +217,68 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 	
+	# reduce any circular debts
+	# eg: E owes W x, W owes B y, so E should owe B x and W should owe B y - x
+	if (w_owes[b] > 0 and b_owes[e] > 0):
+		if(w_owes[b] >= b_owes[e]):
+			w_owes[e] += b_owes[e]
+			w_owes[b] -= b_owes[e]
+			b_owes[e] = 0
+		else:
+			w_owes[e] += w_owes[b]
+			b_owes[e] -= w_owes[b]
+			w_owes[b] = 0
+		
+	if (w_owes[e] > 0 and e_owes[b] > 0):
+		if(w_owes[e] >= e_owes[b]):
+			w_owes[b] += e_owes[b]
+			w_owes[e] -= e_owes[b]
+			e_owes[b] = 0
+		else:
+			w_owes[b] += w_owes[e]
+			e_owes[b] -= w_owes[e]
+			w_owes[e] = 0
+		
+	if (b_owes[w] > 0 and w_owes[e] > 0):
+		if(b_owes[w] >= w_owes[e]):
+			b_owes[e] += w_owes[e]
+			b_owes[w] -= w_owes[e]
+			w_owes[e] = 0
+		else:
+			b_owes[e] += b_owes[w]
+			w_owes[e] -= b_owes[w]
+			b_owes[w] = 0
+
+	if (b_owes[e] > 0 and e_owes[w] > 0):
+		if(b_owes[e] >= e_owes[w]):
+			b_owes[w] += e_owes[w]
+			b_owes[e] -= e_owes[w]
+			e_owes[w] = 0
+		else:
+			b_owes[w] += b_owes[e]
+			e_owes[w] -= b_owes[e]
+			b_owes[e] = 0
+
+	if (e_owes[w] > 0 and w_owes[b] > 0):
+		if(e_owes[w] >= w_owes[b]):
+			e_owes[b] += w_owes[b]
+			e_owes[w] -= w_owes[b]
+			w_owes[b] = 0
+		else:
+			e_owes[b] += e_owes[w]
+			w_owes[b] -= e_owes[w]
+			e_owes[w] = 0
+
+	if (e_owes[b] > 0 and b_owes[w] > 0):
+		if(e_owes[b] >= b_owes[w]):
+			e_owes[w] += b_owes[w]
+			e_owes[b] -= b_owes[w]
+			b_owes[w] = 0
+		else:
+			e_owes[w] += e_owes[b]
+			b_owes[w] -= e_owes[b]
+			e_owes[b] = 0
+
 	# round all values to two decimal places
 	w_owes[b] = round(w_owes[b], 2)
 	w_owes[e] = round(w_owes[e], 2)
@@ -224,7 +286,6 @@ def parseSMS():
 	b_owes[e] = round(b_owes[e], 2)
 	e_owes[w] = round(e_owes[w], 2)
 	e_owes[b] = round(e_owes[b], 2)
-	
 	
 	# update users table of DB with updated debts
 	w_doc["owes"] = w_owes
