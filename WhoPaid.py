@@ -23,13 +23,24 @@ w_number = "+14254436511"
 b_number = "+19256837230"
 e_number = "+15615426296"
 
+# Used to show current balance
+# Only displays >0 values
 def generateBalance(w_owes,b_owes,e_owes):
-	response =  "w owes b: " + str(w_owes[b]) + "\n"
-	response += "w owes e: " + str(w_owes[e]) + "\n"
-	response += "b owes w: " + str(b_owes[w]) + "\n"
-	response += "b owes e: " + str(b_owes[e]) + "\n"
-	response += "e owes w: " + str(e_owes[w]) + "\n"
-	response += "e owes b: " + str(e_owes[b])
+	response = ""
+	
+	if(w_owes[b] > 0):
+		response += "w owes b: " + str(w_owes[b]) + "\n"
+	if(w_owes[e] > 0):
+		response += "w owes e: " + str(w_owes[e]) + "\n"
+	if(b_owes[w] > 0):
+		response += "b owes w: " + str(b_owes[w]) + "\n"
+	if(b_owes[e] > 0):	
+		response += "b owes e: " + str(b_owes[e]) + "\n"
+	if(e_owes[w] > 0):
+		response += "e owes w: " + str(e_owes[w]) + "\n"
+	if(e_owes[b] > 0):
+		response += "e owes b: " + str(e_owes[b])
+		
 	return response
 	
 
