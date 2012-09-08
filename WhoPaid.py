@@ -39,7 +39,7 @@ def generateBalance(w_owes,b_owes,e_owes):
 	if(e_owes[w] > 0):
 		response += "e owes w: " + str(e_owes[w]) + "\n"
 	if(e_owes[b] > 0):
-		response += "e owes b: " + str(e_owes[b])
+		response += "e owes b: " + str(e_owes[b]) + "\n"
 		
 	return response
 	
@@ -81,11 +81,23 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 	
+	# if first element is not a number, return error
+	if (type(body_array[0]) == float or type(body_array[0]) == int):
+		response = "Must text in 'bal' or an amount"
+		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+		return ""
+	
 	# respond to SUBMIT PAYMENT TEXT
 	
 	# determine amount paid, rounded to two decimal points
 	amount = round(float(body_array[0]), 2)
 
+	# if amount is negative, return error
+	if(amount <= 0):
+		response = "Must text in positive amount"
+		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
+		return ""
+	
 	# determine how much each person should contribute
 	# it's either 1/3 amount if it's a payment for everyone,
 	# or just amount if it's a payment from one person to another
@@ -169,7 +181,7 @@ def parseSMS():
 					e_owes[b] = amount_charged - b_owes[e] 
 					b_owes[e] = 0
 			# Eddie owes Brandon case
-			else:
+			elif (e_owes[b] >= 0):
 				e_owes[b] += amount_charged
 
 
