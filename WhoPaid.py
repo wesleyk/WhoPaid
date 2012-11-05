@@ -113,8 +113,10 @@ def parseSMS():
 		# Register payment
 		if(pay_all):
 			payments.insert({"Amount":amount,"From":w,"To":"All"})
+			response = "w paid " + amount "\n"
 		else:
 			payments.insert({"Amount":amount,"From":w,"To":body_array[1]})
+			response = "w paid " + body_array[1] + " " + amount "\n"
 		
 		# pay Brandon case
 		if (pay_all or body_array[1] == "b"):
@@ -151,8 +153,10 @@ def parseSMS():
 		# Register payment
 		if(pay_all):
 			payments.insert({"Amount":amount,"From":b,"To":"All"})
+			response = "b paid " + amount "\n"
 		else:
 			payments.insert({"Amount":amount,"From":b,"To":body_array[1]})
+			response = "b paid " + body_array[1] + " " + amount "\n"
 			
 		# pay Wesley case
 		if (pay_all or body_array[1] == "w"):
@@ -190,8 +194,10 @@ def parseSMS():
 		# Register payment
 		if(pay_all):
 			payments.insert({"Amount":amount,"From":e,"To":"All"})
+			response = "e paid " + amount "\n"
 		else:
 			payments.insert({"Amount":amount,"From":e,"To":body_array[1]})
+			response = "e paid " + body_array[1] + " " + amount "\n"
 			
 		# pay Wesley case
 		if (pay_all or body_array[1] == "w"):
@@ -309,7 +315,7 @@ def parseSMS():
 	users.save(e_doc)
 	
 	# send new balance to all members of Unger
-	response = generateBalance(w_owes,b_owes,e_owes)
+	response += generateBalance(w_owes,b_owes,e_owes)
 	client.sms.messages.create(to=w_number, from_=twilio_number, body=response)
 	client.sms.messages.create(to=b_number, from_=twilio_number, body=response)
 	client.sms.messages.create(to=e_number, from_=twilio_number, body=response)
