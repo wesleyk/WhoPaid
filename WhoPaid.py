@@ -69,6 +69,7 @@ def parseSMS():
 	body = request.values.get('Body', None)
 	
 	body_array = body.split(" ")
+	response = ""
 	
 	# empty text case
 	if (len(body_array) == 0):
