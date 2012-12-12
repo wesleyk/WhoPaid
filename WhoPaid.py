@@ -9,9 +9,7 @@ app = Flask(__name__)
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
 # Twilio details
-account = "AC74068c46306d722c23fc68291b67071a"	  	
-token = "da09cf1ce50760e7ef4405d9c8334239"
-twilio_number = "+14259678372"
+#HIDE TWILIO API DETAILS
 
 # Name constants
 w = "Wesley"
@@ -19,9 +17,7 @@ b = "Brandon"
 e = "Eddie"
 
 # Our phone numbers
-w_number = "+14254436511"
-b_number = "+19256837230"
-e_number = "+15615426296"
+#HIDE PHONE NUMBERS
 
 # Used to show current balance
 # Only displays >0 values
