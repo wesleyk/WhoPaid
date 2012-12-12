@@ -48,8 +48,7 @@ def generateBalance(w_owes,b_owes,e_owes):
 def parseSMS():
 	# Establish connection with Twilio
 	client = TwilioRestClient(account, token)
-	client.sms.messages.create(to=w_number, from_=twilio_number, body="test")
-	return "";
+	
 	# Connect to MongoDB, and retrieve collections
 	connection = Connection(MONGO_URL)
 	db = connection.app7324197
