@@ -190,6 +190,7 @@ def parseSMS():
 		payments.insert({"Amount":amount,"From":payer_dict["name"],"To":body_array[1]})
 		response = payer_dict["name"] + " paid " + body_array[1] + " " + str(amount) + "\n"
 
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test0")
 	# Determine who is involved in the payment
 	payees = []
 	if (pay_all):
