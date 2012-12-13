@@ -125,6 +125,8 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test")
+	return ""
 	# Determine current debts
 	w_doc = users.find_one({"username":'w'})
 	b_doc = users.find_one({"username":'b'})
@@ -136,7 +138,7 @@ def parseSMS():
 	body = request.values.get('Body', None)
 	body_array = body.split(" ")
 	response = ""
-
+	
 	# empty text case
 	if (len(body_array) == 0):
 		return ""
