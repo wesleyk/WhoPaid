@@ -157,7 +157,7 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 
-client.sms.messages.create(to=from_number, from_=twilio_number, body="test3")
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test3")
 	# respond to SUBMIT PAYMENT TEXT
 
 	# determine amount paid, rounded to two decimal points
