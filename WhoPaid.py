@@ -137,7 +137,6 @@ def parseSMS():
 	body_array = body.split(" ")
 	response = ""
 	
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test2")
 	# empty text case
 	if (len(body_array) == 0):
 		return ""
@@ -145,7 +144,7 @@ def parseSMS():
 	# respond to RETRIEVE BALANCE TEXT
 
 	if (body_array[0].lower()[:3] == "bal"):
-		response = generateBalance(w_owes,b_owes,e_owes)
+		response = generateBalance()
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 
@@ -155,7 +154,6 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test3")
 	# respond to SUBMIT PAYMENT TEXT
 
 	# determine amount paid, rounded to two decimal points
