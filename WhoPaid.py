@@ -190,7 +190,6 @@ def parseSMS():
 		payments.insert({"Amount":amount,"From":payer_dict["name"],"To":body_array[1]})
 		response = payer_dict["name"] + " paid " + body_array[1] + " " + str(amount) + "\n"
 
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test0")
 	# Determine who is involved in the payment
 	payees = []
 	if (pay_all):
@@ -200,9 +199,8 @@ def parseSMS():
 	else:
 		payees.append(body_array[1])
 
-	payees.remove(user_dict["name"])
+	payees.remove(payer_dict["name"])
 
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test1")
 	# Complete payment, resolve circular debt, and round
 	processPayment(payer_dict["name"],payees,amount_charged)
 	
