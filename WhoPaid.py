@@ -201,9 +201,11 @@ def parseSMS():
 
 	payees.remove(user_dict["name"])
 
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test1")
 	# Complete payment, resolve circular debt, and round
 	processPayment(payer_dict["name"],payees,amount_charged)
 	
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test2")
 	# update users table of DB with updated debts
 	w_doc["owes"] = owes_dict['w']
 	b_doc["owes"] = owes_dict['b']
@@ -212,6 +214,7 @@ def parseSMS():
 	users.save(b_doc)
 	users.save(e_doc)
 	
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test3")
 	# send new balance to all members of Unger
 	response += generateBalance()
 	client.sms.messages.create(to=w_number, from_=twilio_number, body=response)
