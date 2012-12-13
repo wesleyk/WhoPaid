@@ -125,8 +125,8 @@ def parseSMS():
 	users = db.users
 	payments = db.payments
 
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test")
-	return ""
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test1")
+	
 	# Determine current debts
 	w_doc = users.find_one({"username":'w'})
 	b_doc = users.find_one({"username":'b'})
@@ -139,6 +139,7 @@ def parseSMS():
 	body_array = body.split(" ")
 	response = ""
 	
+	client.sms.messages.create(to=from_number, from_=twilio_number, body="test2")
 	# empty text case
 	if (len(body_array) == 0):
 		return ""
@@ -156,6 +157,7 @@ def parseSMS():
 		client.sms.messages.create(to=from_number, from_=twilio_number, body=response)
 		return ""
 
+client.sms.messages.create(to=from_number, from_=twilio_number, body="test3")
 	# respond to SUBMIT PAYMENT TEXT
 
 	# determine amount paid, rounded to two decimal points
