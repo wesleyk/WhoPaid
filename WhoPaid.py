@@ -124,8 +124,6 @@ def parseSMS():
 	db = connection.app7324197
 	users = db.users
 	payments = db.payments
-
-	client.sms.messages.create(to=from_number, from_=twilio_number, body="test1")
 	
 	# Determine current debts
 	w_doc = users.find_one({"username":'w'})
