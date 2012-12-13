@@ -215,8 +215,8 @@ def parseSMS():
 	# send new balance to all members of Unger
 	response += generateBalance()
 	client.sms.messages.create(to=w_number, from_=twilio_number, body=response)
-	client.sms.messages.create(to=b_number, from_=twilio_number, body=response)
-	client.sms.messages.create(to=e_number, from_=twilio_number, body=response)
+	#client.sms.messages.create(to=b_number, from_=twilio_number, body=response)
+	#client.sms.messages.create(to=e_number, from_=twilio_number, body=response)
 	
 	return ""
 	
