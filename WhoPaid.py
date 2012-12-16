@@ -196,10 +196,9 @@ def parseSMS():
 		payees.append("w")
 		payees.append("b")
 		payees.append("e")
+		payees.remove(payer_dict["name"])
 	else:
 		payees.append(body_array[1])
-
-	payees.remove(payer_dict["name"])
 
 	# Complete payment, resolve circular debt, and round
 	processPayment(payer_dict["name"],payees,amount_charged)
